@@ -1,0 +1,747 @@
+ <!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>忆古 — 让器物开口说话</title>
+ <style>
+   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+ 
+   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+   :root {
+     --bg: #F5F0E8;
+     --bg-deep: #E8E0D2;
+     --ink: #2C2416;
+     --ink-light: #5C5346;
+     --ink-muted: #8A8276;
+     --line: #D4CFC6;
+     --line-subtle: #E6E1DA;
+     --accent: #8B4513;
+     --accent-soft: #A06030;
+     --accent-light: #C9A96E;
+     --accent-pale: #E8D5B0;
+     --surface: #FFFFFF;
+     --serif: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+     --sans: 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', sans-serif;
+   }
+ 
+   html { scroll-behavior: smooth; }
+   body {
+     font-family: var(--sans);
+     background: var(--bg);
+     color: var(--ink);
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+     overflow-x: hidden;
+   }
+ 
+   ::selection { background: var(--accent-light); color: #fff; }
+ 
+   /* ================================
+      SCENE 1 — HERO
+      ================================ */
+   .scene-hero {
+     position: relative;
+     width: 100%;
+     min-height: 100vh;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     overflow: hidden;
+     background: linear-gradient(180deg, #ECE5D8 0%, var(--bg) 100%);
+   }
+ 
+   /* large ambient circle — slow parallax */
+   .hero-ambient {
+     position: absolute;
+     border-radius: 50%;
+     pointer-events: none;
+   }
+   .hero-ambient--a {
+     width: 80vmax; height: 80vmax;
+     background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
+     top: -40vmax; left: -20vmax;
+     animation: ambient-drift 20s ease-in-out infinite alternate;
+   }
+   .hero-ambient--b {
+     width: 50vmax; height: 50vmax;
+     background: radial-gradient(circle, rgba(139,69,19,0.04) 0%, transparent 70%);
+     bottom: -20vmax; right: -10vmax;
+     animation: ambient-drift 25s ease-in-out infinite alternate-reverse;
+   }
+   @keyframes ambient-drift {
+     0% { transform: translate(0, 0); }
+     100% { transform: translate(4vw, 3vh); }
+   }
+ 
+   /* particle field */
+   .particles { position: absolute; inset: 0; pointer-events: none; }
+   .particle {
+     position: absolute; border-radius: 50%;
+     background: var(--accent-light); opacity: 0;
+     animation: particle-rise linear infinite;
+   }
+   @keyframes particle-rise {
+     0% { opacity: 0; transform: translateY(0) scale(0.3); }
+     8% { opacity: 0.55; }
+     35% { opacity: 0.12; }
+     100% { opacity: 0; transform: translateY(-90vh) scale(1.2); }
+   }
+ 
+   .hero-inner {
+     position: relative; z-index: 2;
+     text-align: center; width: 100%;
+     max-width: 900px; padding: 2rem;
+   }
+ 
+   .hero-eyebrow {
+     font-size: 0.7rem; letter-spacing: 0.4em;
+     text-transform: uppercase; color: var(--ink-muted);
+     opacity: 0; transform: translateY(12px);
+     animation: reveal-up 1s 0.15s cubic-bezier(0.16,1,0.3,1) forwards;
+   }
+ 
+   .hero-title {
+     font-family: var(--serif);
+     font-size: clamp(4rem, 12vw, 9rem);
+     font-weight: 600; letter-spacing: 0.03em;
+     line-height: 1; margin: 1.5rem 0 1rem;
+     opacity: 0; transform: translateY(20px);
+     animation: reveal-up 1.2s 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
+   }
+ 
+   .hero-title-sub {
+     font-family: var(--serif);
+     font-size: clamp(0.95rem, 2vw, 1.2rem);
+     font-weight: 300; color: var(--ink-light);
+     letter-spacing: 0.1em; margin-bottom: 3.5rem;
+     opacity: 0; transform: translateY(12px);
+     animation: reveal-up 1s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+   }
+ 
+   @keyframes reveal-up {
+     to { opacity: 1; transform: translateY(0); }
+   }
+ 
+   /* search */
+   .search-wrap {
+     width: 100%; max-width: 520px; margin: 0 auto;
+     opacity: 0; transform: translateY(16px);
+     animation: reveal-up 1s 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+   }
+   .search-line {
+     display: flex; align-items: center;
+     border-bottom: 1px solid var(--line);
+     padding-bottom: 0.6rem;
+     transition: border-color 0.4s ease;
+   }
+   .search-line:focus-within { border-bottom-color: var(--accent); }
+   .search-icon {
+     width: 18px; height: 18px; margin-right: 0.75rem;
+     opacity: 0.3; transition: opacity 0.4s ease; flex-shrink: 0;
+   }
+   .search-line:focus-within .search-icon { opacity: 0.65; }
+   .search-input {
+     flex: 1; border: none; outline: none; background: transparent;
+     font-family: var(--serif); font-size: 1.1rem; font-weight: 300;
+     color: var(--ink); letter-spacing: 0.05em; padding: 0.25rem 0;
+   }
+   .search-input::placeholder { color: var(--ink-muted); }
+ 
+   .hero-prompts {
+     margin-top: 1.8rem;
+     font-size: 0.78rem; color: var(--ink-muted); letter-spacing: 0.06em;
+     opacity: 0;
+     animation: reveal-up 0.8s 1s cubic-bezier(0.16,1,0.3,1) forwards;
+   }
+   .hero-prompts span {
+     border-bottom: 1px dashed var(--line); cursor: pointer;
+     transition: all 0.3s; padding-bottom: 2px;
+   }
+   .hero-prompts span:hover { color: var(--accent); border-bottom-color: var(--accent-light); }
+ 
+   .scroll-hint {
+     position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+     z-index: 2; opacity: 0;
+     animation: reveal-up 0.8s 1.4s cubic-bezier(0.16,1,0.3,1) forwards;
+   }
+   .scroll-hint-line {
+     width: 1px; height: 40px; background: var(--line);
+     margin: 0 auto; border-radius: 1px;
+     animation: scroll-line-pulse 2s ease-in-out infinite;
+   }
+   @keyframes scroll-line-pulse {
+     0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
+     50% { opacity: 1; transform: scaleY(1); }
+   }
+ 
+   /* ================================
+      SCENE 2 — ARTIFACT REVEAL
+      ================================ */
+   .results-wrap {
+     display: none;
+   }
+   .results-wrap.active {
+     display: block;
+   }
+ 
+   .scene-artifact {
+     position: relative;
+     width: 100%; min-height: 100vh;
+     display: flex; align-items: center; justify-content: center;
+     background: var(--bg);
+     overflow: hidden;
+   }
+ 
+   .artifact-bg-ring {
+     position: absolute;
+     width: 70vmin; height: 70vmin;
+     border-radius: 50%;
+     border: 1px solid var(--line-subtle);
+     opacity: 0.5;
+     top: 50%; left: 50%; transform: translate(-50%, -50%);
+   }
+   .artifact-bg-ring--outer {
+     width: 90vmin; height: 90vmin;
+     opacity: 0.25;
+   }
+ 
+   .artifact-inner {
+     position: relative; z-index: 2;
+     text-align: center; width: 100%; max-width: 600px;
+     padding: 4rem 2rem;
+   }
+ 
+   .artifact-visual {
+     width: 100%; max-width: 380px;
+     aspect-ratio: 1/1;
+     margin: 0 auto 2rem;
+     position: relative;
+     display: flex; align-items: center; justify-content: center;
+     opacity: 0; transform: translateY(30px);
+     transition: opacity 1s cubic-bezier(0.16,1,0.3,1),
+                 transform 1s cubic-bezier(0.16,1,0.3,1);
+   }
+   .artifact-visual.revealed {
+     opacity: 1; transform: translateY(0);
+   }
+ 
+   .artifact-img-bg {
+     position: absolute; inset: 0;
+     background: linear-gradient(135deg, #F0EBE0 0%, #E6DFD0 50%, #F0E8D8 100%);
+     border-radius: 2px;
+   }
+   .artifact-img-bg::after {
+     content: ''; position: absolute; inset: 15%; border-radius: 50%;
+     background: radial-gradient(circle, rgba(201,169,110,0.18) 0%, transparent 70%);
+     animation: breathe 5s ease-in-out infinite;
+   }
+   @keyframes breathe {
+     0%, 100% { opacity: 0.35; transform: scale(0.92); }
+     50% { opacity: 0.75; transform: scale(1.05); }
+   }
+ 
+   .artifact-svg-wrap {
+     position: relative; z-index: 1;
+     width: 55%; height: 70%;
+     display: flex; align-items: center; justify-content: center;
+   }
+   .artifact-svg-wrap svg { width: 100%; height: 100%; }
+ 
+   .artifact-name {
+     font-family: var(--serif);
+     font-size: 1.6rem; font-weight: 600;
+     letter-spacing: 0.06em;
+     opacity: 0; transform: translateY(16px);
+     transition: opacity 0.8s 0.3s cubic-bezier(0.16,1,0.3,1),
+                 transform 0.8s 0.3s cubic-bezier(0.16,1,0.3,1);
+   }
+   .artifact-name.revealed { opacity: 1; transform: translateY(0); }
+ 
+   .artifact-era {
+     font-family: var(--serif);
+     font-size: 0.9rem; font-weight: 300;
+     color: var(--ink-muted); letter-spacing: 0.06em;
+     margin-top: 0.4rem;
+     opacity: 0; transform: translateY(12px);
+     transition: opacity 0.8s 0.45s cubic-bezier(0.16,1,0.3,1),
+                 transform 0.8s 0.45s cubic-bezier(0.16,1,0.3,1);
+   }
+   .artifact-era.revealed { opacity: 1; transform: translateY(0); }
+ 
+   /* ================================
+      SCENES 3-N — ANALYSIS BLOCKS
+      ================================ */
+   .scene-analysis {
+     position: relative;
+     width: 100%; min-height: 100vh;
+     display: flex; align-items: center;
+     background: var(--bg);
+     overflow: hidden;
+   }
+   .scene-analysis:nth-child(odd) { background: #F2EDE4; }
+ 
+   .analysis-grid {
+     width: 100%; max-width: 1100px;
+     margin: 0 auto; padding: 4rem 2rem;
+     display: grid; grid-template-columns: 1fr 1fr;
+     gap: clamp(2rem, 6vw, 5rem);
+     align-items: center;
+   }
+ 
+   .analysis-text-col {
+     opacity: 0; transform: translateY(30px);
+     transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                 transform 0.9s cubic-bezier(0.16,1,0.3,1);
+   }
+   .analysis-text-col.revealed { opacity: 1; transform: translateY(0); }
+ 
+   .analysis-number {
+     font-family: var(--serif);
+     font-size: 0.75rem; letter-spacing: 0.3em;
+     color: var(--accent-light); margin-bottom: 1.5rem;
+   }
+ 
+   .analysis-question {
+     font-family: var(--serif);
+     font-size: clamp(1.5rem, 3vw, 2.2rem);
+     font-weight: 600; letter-spacing: 0.04em;
+     line-height: 1.35; margin-bottom: 1.25rem;
+   }
+ 
+   .analysis-answer {
+     font-family: var(--serif);
+     font-size: 1rem; font-weight: 300;
+     color: var(--ink-light); letter-spacing: 0.02em;
+     line-height: 1.9;
+   }
+ 
+   .analysis-visual-col {
+     opacity: 0; transform: translateY(40px);
+     transition: opacity 0.9s 0.2s cubic-bezier(0.16,1,0.3,1),
+                 transform 0.9s 0.2s cubic-bezier(0.16,1,0.3,1);
+   }
+   .analysis-visual-col.revealed { opacity: 1; transform: translateY(0); }
+ 
+   .analysis-visual-box {
+     width: 100%; aspect-ratio: 4/3;
+     background: linear-gradient(135deg, #F0EBE0 0%, #E8E0D2 100%);
+     border-radius: 2px;
+     display: flex; align-items: center; justify-content: center;
+     overflow: hidden;
+   }
+   .analysis-visual-box .mini-artifact {
+     width: 55%; height: 65%;
+     display: flex; align-items: center; justify-content: center;
+     transform: scale(0.92);
+     transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+   }
+   .analysis-visual-box:hover .mini-artifact {
+     transform: scale(1);
+   }
+   .analysis-visual-box .mini-artifact svg { width: 100%; height: 100%; }
+ 
+   /* ================================
+      SCENE — ANNOTATION
+      ================================ */
+   .scene-annotation {
+     min-height: 100vh;
+     display: flex; flex-direction: column;
+     align-items: center; justify-content: center;
+     background: linear-gradient(180deg, var(--bg) 0%, #F0EADC 100%);
+     padding: 4rem 2rem;
+     text-align: center;
+   }
+   .annotation-label-text {
+     font-family: var(--serif);
+     font-size: 1.3rem; font-weight: 600;
+     letter-spacing: 0.06em; margin-bottom: 3rem;
+     opacity: 0; transform: translateY(20px);
+     transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1),
+                 transform 0.8s cubic-bezier(0.16,1,0.3,1);
+   }
+   .annotation-label-text.revealed { opacity: 1; transform: translateY(0); }
+ 
+   .annotation-canvas {
+     width: 100%; max-width: 420px;
+     aspect-ratio: 1/1;
+     background: linear-gradient(135deg, #F0EBE0 0%, #E8E0D2 100%);
+     border-radius: 2px;
+     display: flex; align-items: center; justify-content: center;
+     position: relative;
+     opacity: 0; transform: translateY(30px);
+     transition: opacity 0.9s 0.2s cubic-bezier(0.16,1,0.3,1),
+                 transform 0.9s 0.2s cubic-bezier(0.16,1,0.3,1);
+   }
+   .annotation-canvas.revealed { opacity: 1; transform: translateY(0); }
+   .annotation-canvas .annotation-svg {
+     width: 55%; height: 70%;
+     display: flex; align-items: center; justify-content: center;
+   }
+ 
+   .annotation-note {
+     font-size: 0.72rem; color: var(--ink-muted);
+     letter-spacing: 0.08em; margin-top: 1.2rem;
+     opacity: 0;
+     transition: opacity 0.8s 0.5s cubic-bezier(0.16,1,0.3,1);
+   }
+   .annotation-note.revealed { opacity: 1; }
+ 
+   /* ================================
+      SCENE — EXPORT CTA
+      ================================ */
+   .scene-export {
+     min-height: 50vh;
+     display: flex; flex-direction: column;
+     align-items: center; justify-content: center;
+     background: var(--bg);
+     text-align: center; padding: 4rem 2rem;
+   }
+   .export-headline {
+     font-family: var(--serif);
+     font-size: 1.2rem; font-weight: 300;
+     letter-spacing: 0.06em; color: var(--ink-light);
+     margin-bottom: 2rem;
+     opacity: 0;
+     transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1);
+   }
+   .export-headline.revealed { opacity: 1; }
+   .btn-export {
+     display: inline-block; padding: 0.8rem 3rem;
+     border: 1px solid var(--line); background: transparent;
+     font-family: var(--sans); font-size: 0.8rem;
+     letter-spacing: 0.15em; color: var(--ink);
+     cursor: pointer; transition: all 0.4s ease;
+     border-radius: 0;
+     opacity: 0;
+     transition: opacity 0.8s 0.2s cubic-bezier(0.16,1,0.3,1),
+                 border-color 0.4s, color 0.4s, letter-spacing 0.4s;
+   }
+   .btn-export.revealed { opacity: 1; }
+   .btn-export:hover {
+     border-color: var(--accent); color: var(--accent);
+     letter-spacing: 0.2em;
+   }
+ 
+   /* ================================
+      FIXED ELEMENTS
+      ================================ */
+   .progress-bar {
+     position: fixed; top: 0; left: 0; height: 2px;
+     background: var(--accent); z-index: 1000;
+     width: 0%; transition: width 0.1s linear;
+   }
+   .back-link {
+     position: fixed; top: 2rem; left: 2rem;
+     z-index: 100; font-size: 0.78rem;
+     letter-spacing: 0.12em; color: var(--ink-muted);
+     cursor: pointer; opacity: 0; pointer-events: none;
+     transition: opacity 0.5s;
+     border-bottom: 1px solid transparent;
+     padding-bottom: 2px;
+   }
+   .back-link.visible { opacity: 1; pointer-events: auto; }
+   .back-link:hover { color: var(--ink); border-bottom-color: var(--line); }
+ 
+   .footer-site {
+     text-align: center; padding: 5rem 2rem 3rem;
+     font-size: 0.75rem; color: var(--ink-muted);
+     letter-spacing: 0.08em; background: var(--bg);
+   }
+ 
+   /* ================================
+      RESPONSIVE
+      ================================ */
+   @media (max-width: 768px) {
+     .analysis-grid { grid-template-columns: 1fr; gap: 2rem; }
+     .artifact-visual { max-width: 280px; }
+     .scene-analysis { min-height: auto; padding: 2rem 0; }
+     .scene-artifact { min-height: 90vh; }
+     .back-link { top: 1.2rem; left: 1.2rem; font-size: 0.7rem; }
+   }
+ </style>
+ </head>
+ <body>
+ 
+ <div class="progress-bar" id="progressBar"></div>
+ <div class="back-link" id="backLink">&larr; 回到起点</div>
+ 
+ <!-- ================================================
+      SCENE 1 — HERO / SEARCH
+      ================================================ -->
+ <section class="scene-hero" id="sceneHero">
+   <div class="hero-ambient hero-ambient--a"></div>
+   <div class="hero-ambient hero-ambient--b"></div>
+   <div class="particles" id="particles"></div>
+ 
+   <div class="hero-inner">
+     <div class="hero-eyebrow">Design Inquiry &middot; Cultural Heritage</div>
+     <h1 class="hero-title">忆古</h1>
+     <p class="hero-title-sub">问一件器物，它为什么长成这样</p>
+ 
+     <div class="search-wrap">
+       <div class="search-line">
+         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+           <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
+         </svg>
+         <input type="text" class="search-input" id="searchInput"
+                placeholder="输入一件器物的名字…" autocomplete="off">
+       </div>
+     </div>
+ 
+     <p class="hero-prompts">
+       试试 <span data-q="建窑兔毫盏">建窑兔毫盏</span>
+       &nbsp;&middot;&nbsp;
+       <span data-q="马家窑彩陶罐">马家窑彩陶罐</span>
+       &nbsp;&middot;&nbsp;
+       <span data-q="汝窑天青釉弦纹樽">汝窑天青釉弦纹樽</span>
+     </p>
+   </div>
+ 
+   <div class="scroll-hint"><div class="scroll-hint-line"></div></div>
+ </section>
+ 
+ <!-- ================================================
+      SCENES 2-4 — RESULTS (hidden until search)
+      ================================================ -->
+ <div class="results-wrap" id="resultsWrap">
+ </div>
+ 
+ <footer class="footer-site">
+   忆古 &mdash; 一座桥，连接过去的设计智慧与今天的创造者
+ </footer>
+ 
+ <script>
+ // ---- Data ----
+ const db = {
+   "建窑兔毫盏": {
+     name: "南宋建窑兔毫盏",
+     era: "约 900 年前",
+     analyses: [
+       {
+         q: "为什么釉面是黑色的？",
+         a: "建窑的黑釉并非后期涂抹，而是胎土本身含铁量高达 7%–10%。在 1280℃ 的还原焰中，铁元素从釉中析出、在表面结晶，形成细如兔毫的金色纹路——这不是画上去的，是铁在火里的舞蹈。宋代斗茶崇尚白茶，黑盏最能衬托白色茶沫，这是功能需求对审美的反向塑造。"
+       },
+       {
+         q: "为什么口沿有一圈白边？",
+         a: "这圈白边被称为"兔毫"的"出毫点"——高温下釉料向下流动，口沿处的釉层变薄，露出胎土的本色。它最初是工艺上的"缺陷"，但宋人选择保留而非掩盖，因为那圈浅色恰好为黑色盏壁提供了一道"呼吸的边缘"。这是中国工匠对"工艺痕迹"最早的审美化处理。"
+       },
+       {
+         q: "为什么盏壁这么厚？",
+         a: "厚壁是为了保温。宋代斗茶需要保持茶汤温度，厚壁能延缓热量散失。同时厚胎在高温烧制时不易变形——含铁量极高的胎土在 1280℃ 下极易软化，厚壁是结构的必然。建盏口沿微微内收，注水时防溅，同时引导视线向盏心聚焦——宋代匠人用最少的造型投入，同时解决了保温、结构、防溅和视觉引导四个问题。"
+       }
+     ]
+   },
+   "马家窑彩陶罐": {
+     name: "马家窑文化彩陶罐",
+     era: "约 4000–5000 年前",
+     analyses: [
+       {
+         q: "为什么腹部鼓得这么低？",
+         a: "马家窑陶罐的腹部重心压得很低——这不是审美选择，是物理选择。先民提着它在黄土高原的河边打水，重心越低，越不容易被水流冲翻。它的"矮胖"不是拙朴，是活下来的办法。在工业设计术语中，这是最早的"低重心稳定性"案例。"
+       },
+       {
+         q: "为什么双耳轻微前倾？",
+         a: "两个耳朵不在正侧面，而是微微向前倾了约 15 度。这个角度让绳子拎起罐子时，口沿自然倾斜，倒水更省力。这是一种在工业设计出现之前就用身体感受过无数次的"人因工程"——每一个角度都是使用者的手臂和手腕反复丈量的结果。"
+       },
+       {
+         q: "为什么口沿向外翻？",
+         a: "翻口不是装饰。陶罐常用来盛液体（水、酒、油），翻口在倾倒时引导液流、减少挂壁。这是 5000 年前的"用户体验设计"——一个简单的翻边，让倒水时液体不顺着罐身流到手上。"
+       }
+     ]
+   },
+   "汝窑天青釉弦纹樽": {
+     name: "北宋汝窑天青釉弦纹樽",
+     era: "约 900 年前",
+     analyses: [
+       {
+         q: "为什么它的颜色像雨后的天？",
+         a: "汝窑的天青色并非偶然。釉料中加入了玛瑙末，在 1260℃ 的还原焰中烧出了一种介于蓝与绿之间的微妙青色。宋徽宗梦到"雨过天青云破处"后下令烧制这种颜色——一个皇帝的梦境，通过工匠对窑温和釉料的无数次调整，变成了一件瓷器。汝窑的传世品不足百件，因为那一炉青色稍纵即逝。"
+       },
+       {
+         q: "为什么有三条弦纹？",
+         a: "三条弦纹不是纯粹的装饰线。它们是修坯时的旋转痕迹被有意识地保留和强化——第一道控制口沿厚度，防止高温变形；第二道标记器身最宽处，是视觉重心锚点；第三道在圈足上方收束，引导视线完成上下循环。这是中国陶瓷史上最克制的"极简主义"——三道线，定义了整个器物的节奏。"
+       }
+     ]
+   }
+ };
+ 
+ const SVG = {
+   "建窑兔毫盏": '<svg viewBox="0 0 200 200" fill="none"><path d="M65 40 Q67 30 100 28 Q133 30 135 40 L138 70 Q140 90 138 110 Q142 130 135 150 Q130 160 120 168 Q110 175 100 176 Q90 175 80 168 Q70 160 65 150 Q58 130 62 110 Q60 90 62 70 Z" stroke="#5C5346" stroke-width="1.2" fill="none" opacity="0.5"/></svg>',
+   "马家窑彩陶罐": '<svg viewBox="0 0 200 200" fill="none"><path d="M75 35 Q77 28 100 27 Q123 28 125 35 L128 55 Q132 65 135 85 Q142 105 140 125 Q135 140 125 152 Q115 162 105 166 Q100 168 95 166 Q85 162 75 152 Q65 140 60 125 Q58 105 65 85 Q68 65 72 55 Z" stroke="#5C5346" stroke-width="1.2" fill="none" opacity="0.5"/><ellipse cx="100" cy="100" rx="25" ry="28" stroke="#5C5346" stroke-width="0.8" fill="none" opacity="0.3"/><ellipse cx="100" cy="100" rx="18" ry="20" stroke="#5C5346" stroke-width="0.8" fill="none" opacity="0.3"/></svg>',
+   "汝窑天青釉弦纹樽": '<svg viewBox="0 0 200 200" fill="none"><path d="M80 30 Q82 25 100 24 Q118 25 120 30 L125 45 L122 55 Q125 70 125 90 Q128 120 125 145 Q120 165 110 175 Q105 180 100 181 Q95 180 90 175 Q80 165 75 145 Q72 120 75 90 Q75 70 78 55 L75 45 Z" stroke="#5C5346" stroke-width="1.2" fill="none" opacity="0.5"/><line x1="85" y1="65" x2="115" y2="65" stroke="#C9A96E" stroke-width="0.8" opacity="0.6"/><line x1="84" y1="95" x2="116" y2="95" stroke="#C9A96E" stroke-width="0.8" opacity="0.6"/><line x1="88" y1="125" x2="112" y2="125" stroke="#C9A96E" stroke-width="0.8" opacity="0.6"/></svg>'
+ };
+ 
+ // ---- DOM refs ----
+ const $input = document.getElementById('searchInput');
+ const $wrap = document.getElementById('resultsWrap');
+ const $back = document.getElementById('backLink');
+ const $progress = document.getElementById('progressBar');
+ const $hints = document.querySelectorAll('.hero-prompts span');
+ const $particles = document.getElementById('particles');
+ 
+ // ---- Particle field ----
+ (function seedParticles() {
+   const frag = document.createDocumentFragment();
+   for (let i = 0; i < 22; i++) {
+     const d = document.createElement('div');
+     d.className = 'particle';
+     d.style.left = Math.random() * 100 + '%';
+     d.style.top = (60 + Math.random() * 40) + '%';
+     d.style.width = d.style.height = (2 + Math.random() * 5) + 'px';
+     d.style.animationDuration = (7 + Math.random() * 10) + 's';
+     d.style.animationDelay = Math.random() * 8 + 's';
+     frag.appendChild(d);
+   }
+   $particles.appendChild(frag);
+ })();
+ 
+ // ---- Build results ----
+ function buildResults(key) {
+   const d = db[key];
+   const s = SVG[key];
+   if (!d) return;
+ 
+   const parts = [];
+ 
+   // Scene 2: artifact reveal
+   parts.push(`
+     <section class="scene-artifact" id="sceneArtifact">
+       <div class="artifact-bg-ring"></div>
+       <div class="artifact-bg-ring artifact-bg-ring--outer"></div>
+       <div class="artifact-inner">
+         <div class="artifact-visual" data-reveal>
+           <div class="artifact-img-bg"></div>
+           <div class="artifact-svg-wrap">${s}</div>
+         </div>
+         <div class="artifact-name" data-reveal>${d.name}</div>
+         <div class="artifact-era" data-reveal>${d.era}</div>
+       </div>
+     </section>
+   `);
+ 
+   // Scenes 3-N: analysis blocks
+   d.analyses.forEach((a, i) => {
+     parts.push(`
+       <section class="scene-analysis">
+         <div class="analysis-grid">
+           <div class="analysis-text-col" data-reveal>
+             <div class="analysis-number">0${i+1}</div>
+             <h2 class="analysis-question">${a.q}</h2>
+             <p class="analysis-answer">${a.a}</p>
+           </div>
+           <div class="analysis-visual-col" data-reveal>
+             <div class="analysis-visual-box">
+               <div class="mini-artifact">${s}</div>
+             </div>
+           </div>
+         </div>
+       </section>
+     `);
+   });
+ 
+   // Scene: annotation
+   parts.push(`
+     <section class="scene-annotation">
+       <h3 class="annotation-label-text" data-reveal>形态注解图</h3>
+       <div class="annotation-canvas" data-reveal>
+         <div class="annotation-svg">${s}</div>
+       </div>
+       <p class="annotation-note" data-reveal>辅助线仅用于分析造型逻辑，非考古测绘</p>
+     </section>
+   `);
+ 
+   // Scene: export
+   parts.push(`
+     <section class="scene-export">
+       <p class="export-headline" data-reveal>将分析结果带入你的设计流程</p>
+       <button class="btn-export" data-reveal id="btnExport">导出辅助线 SVG</button>
+     </section>
+   `);
+ 
+   $wrap.innerHTML = parts.join('');
+   $wrap.classList.add('active');
+   $back.classList.add('visible');
+ 
+   // Bind export btn
+   document.getElementById('btnExport').addEventListener('click', () => {
+     alert('辅助线 SVG 导出功能将在后续版本实现。');
+   });
+ 
+   // Observe all [data-reveal] for scroll-triggered animation
+   observeReveals();
+ 
+   // Scroll to artifact scene smoothly
+   setTimeout(() => {
+     const artifact = document.getElementById('sceneArtifact');
+     if (artifact) artifact.scrollIntoView({ behavior: 'smooth' });
+   }, 200);
+ }
+ 
+ // ---- Scroll-triggered reveals ----
+ function observeReveals() {
+   const observer = new IntersectionObserver((entries) => {
+     entries.forEach(e => {
+       if (e.isIntersecting) {
+         e.target.classList.add('revealed');
+       }
+     });
+   }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+ 
+   document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+ }
+ 
+ // ---- Search ----
+ function search(query) {
+   let key = Object.keys(db).find(k => k === query);
+   if (!key) {
+     for (const k of Object.keys(db)) {
+       if (k.includes(query) || query.includes(k.slice(0,2))) {
+         key = k; break;
+       }
+     }
+   }
+   if (!key) {
+     alert('暂未收录此器物。试试 "建窑兔毫盏""马家窑彩陶罐" 或 "汝窑天青釉弦纹樽"。');
+     return;
+   }
+   buildResults(key);
+ }
+ 
+ function goBack() {
+   $wrap.classList.remove('active');
+   $wrap.innerHTML = '';
+   $back.classList.remove('visible');
+   $input.value = '';
+   document.getElementById('sceneHero').scrollIntoView({ behavior: 'smooth' });
+ }
+ 
+ // ---- Events ----
+ $input.addEventListener('keydown', e => {
+   if (e.key === 'Enter' && $input.value.trim()) {
+     search($input.value.trim());
+   }
+ });
+ 
+ $hints.forEach(s => s.addEventListener('click', () => {
+   $input.value = s.dataset.q;
+   search(s.dataset.q);
+ }));
+ 
+ $back.addEventListener('click', goBack);
+ 
+ document.addEventListener('keydown', e => {
+   if (e.key === 'Escape' && $wrap.classList.contains('active')) goBack();
+ });
+ 
+ // ---- Scroll progress ----
+ window.addEventListener('scroll', () => {
+   const h = document.documentElement;
+   const st = h.scrollTop || document.body.scrollTop;
+   const sh = h.scrollHeight - h.clientHeight;
+   $progress.style.width = sh > 0 ? (st / sh * 100) + '%' : '0%';
+ });
+ </script>
+ </body>
+ </html>
