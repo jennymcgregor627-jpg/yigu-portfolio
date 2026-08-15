@@ -157,11 +157,46 @@
 .cr-a{font-family:var(--serif);font-size:1rem;font-weight:300;line-height:2.3;color:var(--ink-dim);letter-spacing:0.02em;}
 .compare-right .cr-fade{animation:ct-fade 0.45s var(--ease);}
 @media (max-width:900px){.compare-view{background:var(--bg-deep);}.compare-layout{flex-direction:column;align-items:center;padding-top:6.5rem;gap:1.8rem;}.compare-left{width:100%;flex-direction:row;gap:1.2rem;}.compare-item{flex:1;}.compare-item .compare-essence{display:none;}.compare-mid{width:100%;flex-direction:row;justify-content:center;gap:8px;}.compare-mid .compare-dim-btn{width:auto;flex:1;min-height:48px;font-size:1.1rem;}.compare-right{width:100%;max-width:none;}.cr-cols{grid-template-columns:1fr;}}
+/* ===== 顶栏按钮居中 + 精致骰子（十三轮） ===== */
+.topbar-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:0.8rem;}
+.topbar-btn--dice{width:40px;height:40px;border-radius:50%;border:1px solid var(--accent-dim);color:var(--accent-light);background:rgba(201,169,110,0.1);transition:all 0.4s var(--ease);}
+.topbar-btn--dice:hover{border-color:var(--accent);color:#fff;background:rgba(201,169,110,0.2);box-shadow:0 0 22px rgba(201,169,110,0.35);}
+.topbar-btn--dice:active{transform:scale(0.92);}
+.dice-icon{display:block;transition:transform 0.6s var(--ease);}
+.topbar-btn--dice:hover .dice-icon{transform:rotate(180deg) scale(1.12);}
+@media (max-width:768px){.topbar-center{gap:0.5rem;}.topbar-btn--dice{width:34px;height:34px;}}
+/* ===== 讲解/探索分列骰子两侧 + 常驻搜索框（十四轮） ===== */
+.topbar-mode{background:transparent;border:1px solid var(--line);color:var(--ink-muted);font-family:var(--sans);font-size:0.7rem;letter-spacing:0.12em;padding:0.5rem 1.1rem;cursor:pointer;transition:all 0.3s var(--ease);}
+.topbar-mode:hover{color:var(--ink);border-color:var(--accent-dim);}
+.topbar-mode.active{color:var(--accent-light);border-color:var(--accent-dim);background:rgba(201,169,110,0.1);box-shadow:inset 0 -1px 0 var(--accent-dim);}
+.topbar-search{position:relative;width:215px;margin-left:auto;}
+.topbar-search input{width:100%;background:rgba(10,8,6,0.6);border:1px solid var(--line);color:var(--ink);font-family:var(--serif);font-size:0.8rem;padding:0.5rem 0.9rem;outline:none;transition:border-color 0.3s var(--ease),box-shadow 0.3s var(--ease);}
+.topbar-search input::placeholder{color:var(--ink-muted);}
+.topbar-search input:focus{border-color:var(--accent-dim);box-shadow:0 0 0 1px rgba(201,169,110,0.2);}
+.topbar-search .search-results{position:absolute;top:calc(100% + 8px);right:0;width:300px;max-height:320px;overflow-y:auto;background:rgba(28,24,19,0.97);backdrop-filter:blur(16px);border:1px solid var(--line);border-top:1px solid var(--accent-dim);display:none;z-index:120;box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.topbar-search .search-results.open{display:block;}
+@media (max-width:768px){.topbar-search{width:118px;}.topbar-search .search-results{width:240px;right:-30px;}.topbar-mode{padding:0.4rem 0.7rem;font-size:0.64rem;}.topbar-center{gap:0.5rem;}}
+/* ===== 顶栏放大 + 间距加大 + 搜索图标（十五轮） ===== */
+.topbar{padding:1.3rem 2.6rem;}
+.topbar-logo{font-size:1.55rem;}
+.topbar-center{gap:2.4rem;}
+.topbar-mode{font-size:0.8rem;letter-spacing:0.14em;padding:0.62rem 1.9rem;}
+.topbar-btn--dice{width:46px;height:46px;}
+.topbar-btn--dice svg{width:23px;height:23px;}
+.topbar-search{width:270px;}
+.topbar-search input{font-size:0.85rem;padding:0.62rem 1rem 0.62rem 2.4rem;}
+.search-icon{position:absolute;left:0.95rem;top:50%;transform:translateY(-50%);color:var(--ink-muted);pointer-events:none;transition:color 0.3s var(--ease);}
+.topbar-search:focus-within .search-icon{color:var(--accent-light);}
+.global-back{top:5.7rem;}
+.analysis-close{top:5.7rem;}
+.analysis-inner{padding-top:6.6rem;}
+.explore-view{padding-top:6.8rem;}
+@media (max-width:768px){.topbar{padding:0.9rem 1rem;}.topbar-logo{font-size:1.2rem;}.topbar-center{gap:0.6rem;}.topbar-mode{font-size:0.68rem;padding:0.45rem 0.8rem;}.topbar-btn--dice{width:38px;height:38px;}.topbar-btn--dice svg{width:20px;height:20px;}.topbar-search{width:130px;}.topbar-search input{font-size:0.72rem;padding:0.5rem 0.7rem 0.5rem 1.9rem;}.search-icon{left:0.7rem;width:13px;height:13px;}.global-back{top:4.4rem;}.analysis-close{top:4.4rem;}.analysis-inner{padding-top:5.6rem;}.explore-view{padding-top:5.6rem;}}
 </style>
 </head>
 <body>
 <div class="noise"></div>
-<nav class="topbar"><div class="topbar-logo">忆<span class="dot">古</span></div><div class="topbar-actions"><div class="mode-toggle" role="group" aria-label="浏览模式"><button class="mode-btn active" id="btnModeGuide">讲解</button><button class="mode-btn" id="btnModeExplore">探索</button></div><div class="search-dropdown"><button class="topbar-btn topbar-btn--icon" id="btnSearch" title="搜索">&#x1F50D;</button><div class="search-panel" id="searchPanel"><input type="text" id="searchInput" placeholder="搜索文物..." autocomplete="off"><div class="search-results" id="searchResults"></div></div></div><button class="topbar-btn topbar-btn--icon" id="btnRandom" title="随机探索">&#x1F3B2;</button></div></nav>
+<nav class="topbar"><div class="topbar-logo">忆<span class="dot">古</span></div><div class="topbar-center"><button class="topbar-mode active" id="btnModeGuide">探索</button><button class="topbar-btn topbar-btn--icon topbar-btn--dice" id="btnRandom" title="随机探索" aria-label="随机探索"><svg class="dice-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="4.5" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><circle cx="16" cy="8" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="8" cy="16" r="1.7" fill="currentColor"/><circle cx="16" cy="16" r="1.7" fill="currentColor"/></svg></button><button class="topbar-mode" id="btnModeExplore">对比</button></div><div class="topbar-search"><svg class="search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input type="text" id="searchInput" placeholder="搜索文物…" autocomplete="off" aria-label="搜索文物"><div class="search-results" id="searchResults"></div></div></nav>
 <div class="scroll-progress" id="scrollProgress"></div>
 <button class="global-back" id="btnGlobalBack">← 返回</button>
 <div class="wall" id="wall"></div>
@@ -193,7 +228,7 @@
 </div>
 
 <div class="filter-bar" id="filterBar"><div class="filter-group"><button class="filter-btn active" data-filter="all">全部</button><button class="filter-btn" data-filter="dynasty:商周">商周</button><button class="filter-btn" data-filter="dynasty:战国">战国</button><button class="filter-btn" data-filter="dynasty:汉">汉</button><button class="filter-btn" data-filter="dynasty:唐">唐</button><button class="filter-btn" data-filter="dynasty:宋">宋</button><button class="filter-btn" data-filter="dynasty:元">元</button><button class="filter-btn" data-filter="dynasty:新石器">新石器</button></div><div class="filter-sep"></div><div class="filter-group"><button class="filter-btn" data-filter="mtag:bronze">青铜</button><button class="filter-btn" data-filter="mtag:ceramic">陶瓷</button><button class="filter-btn" data-filter="mtag:jade">玉</button><button class="filter-btn" data-filter="mtag:lacquer">漆器</button></div></div>
-<div class="explore-view" id="exploreView"><div class="explore-head"><button class="explore-back" id="btnExploreBack">← 返回讲解</button><h2>探索馆藏</h2><p>四十年华器物，挑一件，听它说话。</p></div><div class="explore-grid" id="exploreGrid"></div></div>
+<div class="explore-view" id="exploreView"><div class="explore-head"><button class="explore-back" id="btnExploreBack">← 返回探索</button><h2>对比馆藏</h2><p>两相对照，见器之异同。</p></div><div class="explore-grid" id="exploreGrid"></div></div>
 <div class="compare-bar" id="compareBar"><span class="compare-bar-names" id="compareBarNames"></span><button class="compare-bar-btn" id="btnCompareGo">并排对比 →</button><button class="compare-bar-clear" id="btnCompareClear">✕</button></div>
 <script>var ARTIFACTS = [
   {
@@ -1341,8 +1376,6 @@ var btnDeepDive = document.getElementById('btnDeepDive');
 var analysisOverlay = document.getElementById('analysisOverlay');
 var analysisInner = document.getElementById('analysisInner');
 var filterBar = document.getElementById('filterBar');
-var btnSearch = document.getElementById('btnSearch');
-var searchPanel = document.getElementById('searchPanel');
 var searchInput = document.getElementById('searchInput');
 var searchResults = document.getElementById('searchResults');
 var btnRandom = document.getElementById('btnRandom');
@@ -1733,17 +1766,28 @@ window.addEventListener('popstate', function() { closeAll(); restoreFromUrl(); }
 
 function updateSearchResults(query) {
   searchResults.innerHTML = '';
-  if (!query.trim()) return;
+  if (!query.trim()) { searchResults.classList.remove('open'); return; }
   var q = query.trim().toLowerCase();
-  ARTIFACTS.filter(function(a) {
+  var matches = ARTIFACTS.filter(function(a) {
     return a.name.toLowerCase().indexOf(q) >= 0 || a.dynasty.toLowerCase().indexOf(q) >= 0;
-  }).forEach(function(a) {
+  });
+  if (matches.length === 0) {
+    var empty = document.createElement('div');
+    empty.className = 'search-result-item';
+    empty.style.color = 'var(--ink-muted)';
+    empty.textContent = '未找到相关文物';
+    searchResults.appendChild(empty);
+    searchResults.classList.add('open');
+    return;
+  }
+  matches.forEach(function(a) {
     var item = document.createElement('div');
     item.className = 'search-result-item';
     item.innerHTML = highlightMatch(a.name + ' / ' + a.era, q);
-    item.addEventListener('click', function() { searchPanel.classList.remove('open'); searchInput.value = ''; navigateTo(a.id); });
+    item.addEventListener('click', function() { searchResults.classList.remove('open'); searchInput.value = ''; navigateTo(a.id); });
     searchResults.appendChild(item);
   });
+  searchResults.classList.add('open');
 }
 
 function highlightMatch(text, q) {
@@ -1752,9 +1796,9 @@ function highlightMatch(text, q) {
   return text.substring(0, idx) + '<mark>' + text.substring(idx, idx + q.length) + '</mark>' + text.substring(idx + q.length);
 }
 
-btnSearch.addEventListener('click', function(e) { e.stopPropagation(); searchPanel.classList.toggle('open'); if (searchPanel.classList.contains('open')) searchInput.focus(); });
 searchInput.addEventListener('input', function() { updateSearchResults(searchInput.value); });
-document.addEventListener('click', function(e) { if (!searchPanel.contains(e.target) && e.target !== btnSearch) searchPanel.classList.remove('open'); });
+searchInput.addEventListener('focus', function() { if (searchInput.value.trim()) updateSearchResults(searchInput.value); });
+document.addEventListener('click', function(e) { if (!searchResults.contains(e.target) && e.target !== searchInput) searchResults.classList.remove('open'); });
 btnRandom.addEventListener('click', randomExplore);
 cardOverlay.addEventListener('click', function(e) { if (e.target === cardOverlay) closeCard(); });
 btnDeepDive.addEventListener('click', openDeepDive);
