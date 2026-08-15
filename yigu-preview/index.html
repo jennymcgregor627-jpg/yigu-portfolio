@@ -43,9 +43,10 @@
 .explore-view{position:fixed;inset:0;z-index:41;background:var(--bg-deep);overflow-y:auto;display:none;padding:6rem 2rem 9rem;opacity:0;transition:opacity 0.45s var(--ease);}
 .explore-view.active{display:block;}
 .explore-view.fade-in{opacity:1;}
-.explore-head{max-width:1200px;margin:0 auto 2rem;}
-.explore-head h2{font-family:var(--serif);font-size:1.6rem;font-weight:500;letter-spacing:0.06em;}
-.explore-head p{font-family:var(--serif);font-size:0.8rem;font-weight:300;color:var(--ink-muted);margin-top:0.4rem;}
+.explore-head{max-width:1200px;margin:0 auto 2rem;position:relative;text-align:center;}
+.explore-head h2{font-family:var(--serif);font-size:1.6rem;font-weight:500;letter-spacing:0.06em;margin:0 auto;}
+.explore-head p{font-family:var(--serif);font-size:0.8rem;font-weight:300;color:var(--ink-muted);margin-top:0.4rem;margin-bottom:0;}
+.explore-head .explore-back{position:absolute;left:0;top:0;margin-bottom:0;}
 .explore-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;max-width:1200px;margin:0 auto;}
 .explore-card{position:relative;border:1px solid var(--line);background:var(--bg-surface);cursor:pointer;transition:transform 0.35s var(--ease),border-color 0.35s var(--ease),box-shadow 0.35s var(--ease);overflow:hidden;}
 .explore-card:hover{transform:translateY(-6px);border-color:var(--accent-dim);box-shadow:0 10px 30px rgba(0,0,0,0.35);}
@@ -55,8 +56,8 @@
 .explore-name{font-family:var(--serif);font-size:1.02rem;font-weight:600;margin-bottom:0.2rem;}
 .explore-era{font-size:0.64rem;color:var(--accent-dim);letter-spacing:0.08em;margin-bottom:0.6rem;}
 .explore-question{font-family:var(--serif);font-size:0.74rem;font-weight:300;line-height:1.75;color:var(--ink-dim);}
-.explore-check{position:absolute;top:0.7rem;right:0.7rem;width:22px;height:22px;border:1px solid var(--line);background:rgba(10,8,6,0.72);display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:transparent;transition:all 0.25s var(--ease);z-index:2;}
-.explore-card.checked .explore-check{color:var(--accent-light);border-color:var(--accent);background:rgba(201,169,110,0.16);}
+.explore-card.checked{border-color:var(--accent);box-shadow:0 0 0 1px rgba(201,169,110,0.6),0 0 36px rgba(201,169,110,0.22);transform:translateY(-3px);}
+.explore-card.checked::after{content:"✓";position:absolute;top:0.7rem;right:0.7rem;width:27px;height:27px;border-radius:50%;background:linear-gradient(180deg,#E8CD8A,#C9A96E);color:#14100A;font-size:0.8rem;display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:0 0 16px rgba(201,169,110,0.55);}
 .compare-bar{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%) translateY(20px);z-index:96;display:flex;gap:0.8rem;align-items:center;padding:0.65rem 1.2rem;background:rgba(28,24,19,0.97);border:1px solid var(--line);border-top:1px solid var(--accent-dim);opacity:0;pointer-events:none;transition:all 0.4s var(--ease);}
 .compare-bar.active{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
 .compare-bar-names{font-family:var(--serif);font-size:0.78rem;color:var(--ink-dim);}
@@ -1916,18 +1917,8 @@ function buildExplore() {
     card.className = 'explore-card';
     card.dataset.id = a.id;
     var q1 = a.analyses && a.analyses.length ? a.analyses[0].q : a.essence;
-    card.innerHTML = '<div class="explore-img" style="background-image:url(' + a.img + ')"></div><div class="explore-info"><div class="explore-name">' + a.name + '</div><div class="explore-era">' + a.era + '</div><div class="explore-question">' + q1 + '</div></div><div class="explore-check">✓</div>';
-    card.addEventListener('click', function(e) {
-      if (e.target.closest('.explore-check')) { toggleCompareSel(a.id); return; }
-      state.from = 'explore';
-      var view = document.getElementById('exploreView');
-      view.classList.remove('fade-in');
-      setTimeout(function() {
-        view.classList.remove('active');
-        setMode('guide', false);
-        navigateTo(a.id);
-      }, 350);
-    });
+    card.innerHTML = '<div class="explore-img" style="background-image:url(' + a.img + ')"></div><div class="explore-info"><div class="explore-name">' + a.name + '</div><div class="explore-era">' + a.era + '</div><div class="explore-question">' + q1 + '</div></div>';
+    card.addEventListener('click', function() { toggleCompareSel(a.id); });
     grid.appendChild(card);
   });
 }
