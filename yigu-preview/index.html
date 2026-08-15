@@ -193,6 +193,33 @@
 .analysis-inner{padding-top:6.6rem;}
 .explore-view{padding-top:6.8rem;}
 @media (max-width:768px){.topbar{padding:0.9rem 1rem;}.topbar-logo{font-size:1.2rem;}.topbar-center{gap:0.6rem;}.topbar-mode{font-size:0.68rem;padding:0.45rem 0.8rem;}.topbar-btn--dice{width:38px;height:38px;}.topbar-btn--dice svg{width:20px;height:20px;}.topbar-search{width:130px;}.topbar-search input{font-size:0.72rem;padding:0.5rem 0.7rem 0.5rem 1.9rem;}.search-icon{left:0.7rem;width:13px;height:13px;}.global-back{top:4.4rem;}.analysis-close{top:4.4rem;}.analysis-inner{padding-top:5.6rem;}.explore-view{padding-top:5.6rem;}}
+/* ===== 封面（十九轮） ===== */
+.cover{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 90% 70% at 50% 28%, rgba(201,169,110,0.10) 0%, rgba(201,169,110,0.03) 45%, rgba(201,169,110,0) 70%), #0A0806;padding:7rem 2rem 5rem;text-align:center;overflow:hidden;}
+.cover::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(72vmin,540px);height:min(72vmin,540px);border:1px solid rgba(201,169,110,0.13);border-radius:50%;pointer-events:none;}
+.cover::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(54vmin,400px);height:min(54vmin,400px);border:1px solid rgba(201,169,110,0.08);border-radius:50%;pointer-events:none;}
+.cover-inner{position:relative;z-index:2;animation:cover-in 1.5s var(--ease) both;}
+@keyframes cover-in{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.cover-seal{display:inline-flex;align-items:center;justify-content:center;width:76px;height:76px;border:2px solid var(--accent);color:var(--accent-light);font-family:var(--serif);font-size:1.5rem;letter-spacing:0.12em;writing-mode:vertical-rl;border-radius:6px;box-shadow:inset 0 0 0 5px rgba(201,169,110,0.08),0 0 30px rgba(201,169,110,0.12);margin-bottom:2.4rem;animation:seal-breathe 3.6s ease-in-out infinite;}
+@keyframes seal-breathe{0%,100%{box-shadow:inset 0 0 0 5px rgba(201,169,110,0.08),0 0 26px rgba(201,169,110,0.1);}50%{box-shadow:inset 0 0 0 5px rgba(201,169,110,0.14),0 0 44px rgba(201,169,110,0.22);}}
+.cover-title{font-family:var(--serif);font-size:clamp(3.4rem,9vw,5.4rem);font-weight:700;letter-spacing:0.32em;color:var(--ink);margin-right:-0.32em;line-height:1.1;}
+.cover-sub{font-family:var(--serif);font-size:clamp(0.9rem,2.4vw,1.15rem);font-weight:300;letter-spacing:0.5em;color:var(--accent-light);margin-top:1.8rem;text-indent:0.5em;}
+.cover-rule{display:flex;align-items:center;gap:0.6rem;margin:2.2rem auto 0;max-width:340px;}
+.cover-rule::before,.cover-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,169,110,0.5));}
+.cover-rule::after{background:linear-gradient(90deg,rgba(201,169,110,0.5),transparent);}
+.cover-rule span{width:5px;height:5px;background:var(--accent);transform:rotate(45deg);flex-shrink:0;}
+.cover-stance{font-family:var(--serif);font-size:0.82rem;font-weight:300;line-height:2.3;letter-spacing:0.24em;color:var(--ink-dim);margin-top:1.9rem;}
+.cover-enter{display:inline-flex;align-items:center;gap:0.6rem;margin-top:2.8rem;background:transparent;border:1px solid var(--accent-dim);color:var(--accent-light);font-family:var(--sans);font-size:0.78rem;letter-spacing:0.22em;padding:0.88rem 2.5rem;cursor:pointer;transition:all 0.4s var(--ease);}
+.cover-enter:hover{border-color:var(--accent);color:#fff;background:rgba(201,169,110,0.12);box-shadow:0 0 32px rgba(201,169,110,0.28);}
+.cover-enter-arr{display:inline-block;transition:transform 0.3s var(--ease);}
+.cover-enter:hover .cover-enter-arr{transform:translateY(3px);}
+.cover-hint{position:absolute;bottom:1.7rem;left:50%;transform:translateX(-50%);font-family:var(--sans);font-size:0.62rem;letter-spacing:0.32em;color:var(--ink-muted);display:flex;flex-direction:column;align-items:center;gap:0.6rem;z-index:2;}
+.cover-hint-arr{width:1px;height:36px;background:linear-gradient(180deg,var(--accent-dim),transparent);animation:hint-drop 2s var(--ease) infinite;}
+@keyframes hint-drop{0%{transform:scaleY(0);transform-origin:top;}55%{transform:scaleY(1);transform-origin:top;}100%{transform:scaleY(0);transform-origin:bottom;}}
+@media (max-width:768px){.cover{padding:6rem 1.2rem 4rem;}.cover-title{font-size:3rem;letter-spacing:0.24em;margin-right:-0.24em;}.cover-sub{letter-spacing:0.32em;}.cover-stance{font-size:0.74rem;letter-spacing:0.18em;}}
+/* ===== 封面隐藏顶栏，进入正文滑入（二十轮） ===== */
+.topbar{transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform 0.55s var(--ease),opacity 0.55s var(--ease);}
+.topbar.visible{transform:translateY(0);opacity:1;pointer-events:auto;}
+.filter-bar.cover-hide{opacity:0;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -200,6 +227,17 @@
 <nav class="topbar"><div class="topbar-logo">忆<span class="dot">古</span></div><div class="topbar-center"><button class="topbar-mode active" id="btnModeGuide">探索</button><button class="topbar-btn topbar-btn--icon topbar-btn--dice" id="btnRandom" title="随机探索" aria-label="随机探索"><svg class="dice-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="4.5" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><circle cx="16" cy="8" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="8" cy="16" r="1.7" fill="currentColor"/><circle cx="16" cy="16" r="1.7" fill="currentColor"/></svg></button><button class="topbar-mode" id="btnModeExplore">对比</button></div><div class="topbar-search"><svg class="search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input type="text" id="searchInput" placeholder="搜索文物…" autocomplete="off" aria-label="搜索文物"><div class="search-results" id="searchResults"></div></div></nav>
 <div class="scroll-progress" id="scrollProgress"></div>
 <button class="global-back" id="btnGlobalBack">← 返回</button>
+<section class="cover" id="cover">
+<div class="cover-inner">
+<div class="cover-seal" aria-hidden="true">忆古</div>
+<h1 class="cover-title">忆古</h1>
+<p class="cover-sub">让器物开口说话的 AI 文化转译平台</p>
+<div class="cover-rule"><span></span></div>
+<p class="cover-stance">非百科 · 而是对话<br>非替代 · 而是转译<br>非说教 · 而是共情</p>
+<button class="cover-enter" id="btnCoverEnter">进入馆藏 <span class="cover-enter-arr">↓</span></button>
+</div>
+<div class="cover-hint">向下滑动探索<span class="cover-hint-arr"></span></div>
+</section>
 <div class="wall" id="wall"></div>
 <div class="wall-flashlight" id="flashlight"></div>
 <div class="floating-artifact" id="floating"></div>
@@ -1380,6 +1418,7 @@ var filterBar = document.getElementById('filterBar');
 var searchInput = document.getElementById('searchInput');
 var searchResults = document.getElementById('searchResults');
 var btnRandom = document.getElementById('btnRandom');
+var btnCoverEnter = document.getElementById('btnCoverEnter');
 var btnModeGuide = document.getElementById('btnModeGuide');
 var btnModeExplore = document.getElementById('btnModeExplore');
 var btnCompareGo = document.getElementById('btnCompareGo');
@@ -1744,6 +1783,7 @@ function restoreFromUrl() {
   var q = p.get('q'), step = p.get('step'), filter = p.get('filter'), mode = p.get('mode');
   if (filter) applyFilter(filter);
   if (mode === 'explore') setMode('explore', false);
+  if (q || step || filter || mode || p.get('a') || p.get('b')) document.querySelector('.topbar').classList.add('visible');
   if (p.get('a') && p.get('b')) {
     setTimeout(function() { openCompare(p.get('a'), p.get('b')); }, 200);
     return;
@@ -1801,6 +1841,7 @@ searchInput.addEventListener('input', function() { updateSearchResults(searchInp
 searchInput.addEventListener('focus', function() { if (searchInput.value.trim()) updateSearchResults(searchInput.value); });
 document.addEventListener('click', function(e) { if (!searchResults.contains(e.target) && e.target !== searchInput) searchResults.classList.remove('open'); });
 btnRandom.addEventListener('click', randomExplore);
+btnCoverEnter.addEventListener('click', function() { document.getElementById('wall').scrollIntoView({ behavior: 'smooth' }); });
 cardOverlay.addEventListener('click', function(e) { if (e.target === cardOverlay) closeCard(); });
 btnDeepDive.addEventListener('click', openDeepDive);
 btnModeGuide.addEventListener('click', function() { setMode('guide'); });
@@ -1932,6 +1973,7 @@ function setMode(mode, doPush) {
     buildExplore();
     closeAll();
     filterBar.classList.add('hidden');
+    document.querySelector('.topbar').classList.add('visible');
     ev.classList.add('active');
     setTimeout(function() { ev.classList.add('fade-in'); }, 30);
   } else {
@@ -2009,12 +2051,21 @@ function updateProgress() {
   document.getElementById('scrollProgress').style.width = (p * 100) + '%';
 }
 
+// 封面区域隐藏顶栏与底部筛选栏，进入正文后滑入显示
+function updateTopbarVisibility() {
+  var show = window.scrollY > window.innerHeight * 0.55;
+  document.querySelector('.topbar').classList.toggle('visible', show);
+  filterBar.classList.toggle('cover-hide', !show);
+}
+window.addEventListener('scroll', updateTopbarVisibility, { passive: true });
+window.addEventListener('resize', updateTopbarVisibility);
+
 (function initFlashlight() {
   if (window.matchMedia('(pointer:coarse)').matches) return;
   var fl = document.getElementById('flashlight');
   var ticking = false;
   document.addEventListener('mousemove', function(e) {
-    if (state.selectedId || state.deepDiveId || state.mode === 'explore') { fl.classList.remove('active'); return; }
+    if (state.selectedId || state.deepDiveId || state.mode === 'explore' || window.scrollY < window.innerHeight * 0.5) { fl.classList.remove('active'); return; }
     if (!ticking) {
       requestAnimationFrame(function() {
         fl.style.background = 'radial-gradient(circle 280px at ' + e.clientX + 'px ' + e.clientY + 'px, transparent 0%, rgba(10,8,6,0.25) 55%, rgba(10,8,6,0.65) 100%)';
@@ -2066,6 +2117,7 @@ function updateProgress() {
 })();
 
 updateProgress();
+updateTopbarVisibility();
 restoreFromUrl();
 
 </script>
